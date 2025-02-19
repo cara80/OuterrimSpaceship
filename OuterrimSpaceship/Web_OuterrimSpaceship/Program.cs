@@ -1,10 +1,16 @@
+using Microsoft.EntityFrameworkCore;
 using Web_OuterrimSpaceship.Components;
+using Web_OuterrimSpaceship.DB;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddDbContextFactory<AircraftContext>(options =>
+    options.UseSqlite("Data Source=./DB/aircraft.db"));
+
 
 var app = builder.Build();
 
