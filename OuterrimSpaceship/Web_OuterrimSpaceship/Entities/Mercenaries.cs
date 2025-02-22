@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Web_OuterrimSpaceship.Entities;
 
+[Table("Mercenaries")]
 public class Mercenaries
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]

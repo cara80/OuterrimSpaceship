@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace Web_OuterrimSpaceship.Entities;
 
+[Table("Aircraft_Spezifications")]
 public class AircraftSpezifications
 {
     [Key]
