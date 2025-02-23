@@ -35,7 +35,7 @@ public class ARepositoryAsync<TEntity> : IRepositoryAsync<TEntity> where TEntity
         _table.UpdateRange(list);
         await _context.SaveChangesAsync();
     }
-
+    
     public async Task<TEntity?> ReadAsync(int id) => 
         await _table.FindAsync(id);
 

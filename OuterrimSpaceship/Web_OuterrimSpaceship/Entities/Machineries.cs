@@ -3,8 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Web_OuterrimSpaceship.Entities;
 
-[Table("Machineries")]
-public class Machineries
+public abstract class AMachineries
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int MachineryId { get; set; }
