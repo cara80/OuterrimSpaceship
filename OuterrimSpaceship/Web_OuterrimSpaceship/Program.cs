@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Model_OuterrimSpaceship.Repos;
+using Web_OuterrimSpaceship.AmelieAmKoche;
 using Web_OuterrimSpaceship.Components;
+using Web_OuterrimSpaceship.Components.Pages;
 using Web_OuterrimSpaceship.DB;
 using Web_OuterrimSpaceship.Entities;
 
@@ -14,7 +16,7 @@ builder.Services.AddDbContextFactory<AircraftContext>(options =>
     options.UseSqlite("Data Source=./DB/aircraft.db"));
 
 builder.Services.AddScoped<IRepositoryAsync<Aircrafts>, ARepositoryAsync<Aircrafts>>();
-
+builder.Services.AddScoped<AircraftService>();
 
 var app = builder.Build();
 
