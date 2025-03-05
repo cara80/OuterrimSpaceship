@@ -1,13 +1,21 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Web_OuterrimSpaceship.DB;
 
 namespace Model_OuterrimSpaceship.Repos;
 
 
 public class ARepositoryAsync<TEntity> : IRepositoryAsync<TEntity> where TEntity : class
 {
-    private DbContext _context;
+    private AircraftContext _context;
     private DbSet<TEntity> _table;
+
+    public ARepositoryAsync(AircraftContext context)
+    {
+        _context = context;
+        _table = context.Set<TEntity>();
+    }
+    
     public async Task<TEntity> CreateAsync(TEntity t)
     {
         await _table.AddAsync(t);
