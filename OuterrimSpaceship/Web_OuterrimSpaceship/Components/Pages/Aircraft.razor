@@ -1,0 +1,169 @@
+﻿@page "/Aircraft"
+@using Model_OuterrimSpaceship.Repos
+@using Web_OuterrimSpaceship.Entities
+@inject IRepositoryAsync<Aircrafts> AircraftRepo
+@inject IRepositoryAsync<AircraftSpezifications> SpezRepo
+@rendermode InteractiveServer
+
+<h2 class="text-center my-4">Aircraft Management</h2>
+
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+    <tr>
+        <th>Name</th>
+        <th>Fuel</th>
+        <th>Speed</th>
+        <th>Altitude</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var aircraft in _aircrafts)
+    {
+    <tr>
+        <td>@aircraft.Name</td>
+        <td>@aircraft.Fuel</td>
+        <td>@aircraft.Speed</td>
+        <td>@aircraft.Altitude</td>
+        <td>
+            <button class="btn btn-success btn-sm" @onclick="() => EditAircraft(aircraft)">Edit</button>
+            <button class="btn btn-danger btn-sm" @onclick="() => DeleteAircraft(aircraft)">Delete</button>
+        </td>
+    </tr>
+    }
+    </tbody>
+</table>
+
+<div class="container mt-4">
+    <h3>Add Aircraft</h3>
+    <EditForm Model="NewAircraft" OnValidSubmit="CreateAircraft">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="alert alert-danger" />
+        <div class="mb-3">
+            <label class="form-label">Name:</label>
+            <InputText @bind-Value="NewAircraft.Name" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Fuel:</label>
+            <InputNumber @bind-Value="NewAircraft.Fuel" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Speed:</label>
+            <InputNumber @bind-Value="NewAircraft.Speed" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Altitude:</label>
+            <InputNumber @bind-Value="NewAircraft.Altitude" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Specification:</label>
+            <InputSelect @bind-Value="NewAircraft.SpezificationId" class="form-select">
+                <option value="0">-- Please Select --</option>
+                @foreach (var spec in _specifications)
+                {
+                <option value="@spec.SpezificationId">@spec.SpezificationCode</option>
+                }
+            </InputSelect>
+        </div>
+        <button class="btn btn-primary" type="submit">Create</button>
+    </EditForm>
+</div>
+
+@if (_editMode)
+{
+<div class="container mt-4">
+    <h3>Edit Aircraft</h3>
+    <EditForm Model="@EditingAircraft" OnValidSubmit="UpdateAircraft">
+        <DataAnnotationsValidator />
+        <div class="mb-3">
+            <label class="form-label">Name:</label>
+            <InputText @bind-Value="EditingAircraft.Name" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Fuel:</label>
+            <InputNumber @bind-Value="EditingAircraft.Fuel" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Speed:</label>
+            <InputNumber @bind-Value="EditingAircraft.Speed" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Altitude:</label>
+            <InputNumber @bind-Value="EditingAircraft.Altitude" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Specification:</label>
+            <InputSelect @bind-Value="EditingAircraft.SpezificationId" class="form-select">
+                <option value="0">-- Please Select --</option>
+                @foreach (var spec in _specifications)
+                {
+                <option value="@spec.SpezificationId">@spec.SpezificationCode</option>
+                }
+            </InputSelect>
+        </div>
+        <button class="btn btn-primary" type="submit">Update</button>
+    </EditForm>
+</div>
+}
+
+@code {
+    private List<Aircrafts> _aircrafts = new();
+    private Aircrafts NewAircraft { get; set; } = new();
+    public Aircrafts? EditingAircraft { get; set; }
+    public bool _editMode;
+    private List<AircraftSpezifications> _specifications = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAircrafts();
+        await LoadSpecifications();
+    }
+
+    private async Task LoadAircrafts()
+    {
+        _aircrafts = await AircraftRepo.ReadAllAsync();
+    }
+
+    private async Task LoadSpecifications()
+    {
+        _specifications = await SpezRepo.ReadAllAsync();
+    }
+
+    private async Task CreateAircraft()
+    {
+        await AircraftRepo.CreateAsync(NewAircraft);
+        NewAircraft = new Aircrafts();
+        await LoadAircrafts();
+    }
+
+    private async Task EditAircraft(Aircrafts aircraft)
+    {
+        _editMode = true;
+        EditingAircraft = new Aircrafts
+        {
+            AircraftId = aircraft.AircraftId,
+            Name = aircraft.Name,
+            Fuel = aircraft.Fuel,
+            Speed = aircraft.Speed,
+            Altitude = aircraft.Altitude,
+            SpezificationId = aircraft.SpezificationId
+        };
+    }
+
+    private async Task UpdateAircraft()
+    {
+        if (EditingAircraft != null)
+        {
+            await AircraftRepo.UpdateAsync(EditingAircraft);
+            _editMode = false;
+        }
+        EditingAircraft = null;
+    }
+
+    private async Task DeleteAircraft(Aircrafts aircraft)
+    {
+        await AircraftRepo.DeleteAsync(aircraft);
+        _aircrafts.Remove(aircraft);
+        await LoadAircrafts();
+    }
+}
