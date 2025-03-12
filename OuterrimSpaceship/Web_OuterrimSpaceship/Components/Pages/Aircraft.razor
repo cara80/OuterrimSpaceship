@@ -152,12 +152,19 @@
 
     private async Task UpdateAircraft()
     {
-        if (EditingAircraft != null)
+        if (_editMode)
         {
             await AircraftRepo.UpdateAsync(EditingAircraft);
-            _editMode = false;
         }
-        EditingAircraft = null;
+        else
+        {
+            await AircraftRepo.CreateAsync(EditingAircraft);
+        }
+
+        _aircrafts = await AircraftRepo.ReadAllAsync();
+        EditingAircraft = new Aircrafts();
+        _editMode = false;
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task DeleteAircraft(Aircrafts aircraft)
