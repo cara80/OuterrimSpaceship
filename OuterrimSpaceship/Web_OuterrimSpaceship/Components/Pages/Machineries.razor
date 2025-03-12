@@ -1,0 +1,128 @@
+﻿@page "/machineries"
+<!--@using Model_OuterrimSpaceship.Repos
+@using Web_OuterrimSpaceship.Entities
+@inject IRepositoryAsync<AMachineries> MachineryRepositoryAsync
+@inject IRepositoryAsync<Compartments> CompartmentRepositoryAsync
+@inject IDialogService DialogService
+
+@rendermode InteractiveServer
+
+<MudStack>
+    
+    <MudGrid Class="w-100" Spacing="10" Justify="Justify.Center">
+        <MudItem xs="12">
+            <MudPaper Class="d-flex align-center justify-center mud-width-full py-8 h2">All machinery</MudPaper>
+        </MudItem>
+        @if (MachinerieList != null)
+        {
+            @foreach (var machinery in MachinerieList)
+            {
+                <MudItem lg="3">
+                    <MudCard>
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6">@machinery.Label</MudText>
+                            </CardHeaderContent>
+                            <CardHeaderActions>
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default"
+                                               OnClick="@(() => EditMachinery(machinery))"/>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default"
+                                               OnClick="@(() => DeleteMachinery(machinery))"/>
+                            </CardHeaderActions>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <MudText Color="Color.Surface">Function: @machinery.Function</MudText>
+                            <MudText Color="Color.Surface"></MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+            }
+            <MudItem xs="12">
+                <MudPaper Class="d-flex align-center justify-center mud-width-full py-8 h2">Weapon systems:</MudPaper>
+            </MudItem>
+            @foreach (var machinery in Weapons)
+            {
+                <MudItem lg="3">
+                    <MudCard>
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6">@machinery.Label</MudText>
+                            </CardHeaderContent>
+                            <CardHeaderActions>
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default"
+                                               OnClick="@(() => EditMachinery(machinery))"/>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default"
+                                               OnClick="@(() => DeleteMachinery(machinery))"/>
+                            </CardHeaderActions>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <MudText Color="Color.Surface">Function: @machinery.Function</MudText>
+                            <MudText Color="Color.Surface"></MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+            }
+        }
+    </MudGrid>
+    <MudButton Color="Color.Primary" OnClick="@(() => CreateMachinery(new Machinery()))">Create new Machinery</MudButton>
+</MudStack>
+
+
+@code {
+
+    private List<AMachineries>? MachinerieList { get; set; }
+    private List<AMachineries>? Weapons { get; set; }
+    private List<Compartments>? Compartments { get; set; }
+    private List<int> _compids { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        MachinerieList = await MachineryRepositoryAsync.ReadAllAsync();
+        Weapons = await MachineryRepositoryAsync.GetWeaponsAsync();
+        Compartments = await CompartmentRepositoryAsync.ReadAllAsync();
+        _compids = Compartments.Select(a => a.Id).ToList();
+    }
+
+    private async Task DeleteMachinery(AMachineries machinery)
+    {
+        await MachineryRepositoryAsync.DeleteAsync(machinery);
+        MachinerieList = await MachineryRepositoryAsync.ReadAllAsync();
+    }
+
+    private async Task EditMachinery(AMachineries machinery)
+    {
+        var dialog = await DialogService.ShowAsync<DialogEditMachinery>("Edit Machinery", new DialogParameters()
+        {
+            { "Machinery", machinery },
+            { "Type", "Edit"},
+            {"CompartmentList", _compids}
+
+        }, new ()
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            FullWidth = true
+        });
+        var result = await dialog.Result;
+
+        if (result is { Canceled: false }) MachinerieList = await MachineryRepositoryAsync.ReadAllAsync();
+    }
+
+    private async Task CreateMachinery(Machinery machinery)
+    {
+        var dialog = await DialogService.ShowAsync<DialogEditMachinery>("Create Machinery", new DialogParameters()
+        {
+            { "Machinery", machinery },
+            { "Type", "Create"},
+            {"CompartmentList", _compids}
+        }, new ()
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            FullWidth = true
+        });
+        var result = await dialog.Result;
+
+        if (result is { Canceled: false }) MachinerieList = await MachineryRepositoryAsync.ReadAllAsync();
+    }
+}-->

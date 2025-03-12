@@ -15,6 +15,10 @@ builder.Services.AddDbContextFactory<AircraftContext>(options =>
 
 builder.Services.AddScoped<IRepositoryAsync<Aircrafts>, ARepositoryAsync<Aircrafts>>();
 builder.Services.AddScoped<IRepositoryAsync<AircraftSpezifications>, ARepositoryAsync<AircraftSpezifications>>();
+builder.Services.AddScoped<IRepositoryAsync<AircraftCrewJT>, ARepositoryAsync<AircraftCrewJT>>();
+builder.Services.AddScoped<IRepositoryAsync<Mercenaries>, ARepositoryAsync<Mercenaries>>();
+builder.Services.AddScoped<IRepositoryAsync<CrimeSyndicates>, ARepositoryAsync<CrimeSyndicates>>();
+builder.Services.AddScoped<IRepositoryAsync<AMachineries>, ARepositoryAsync<AMachineries>>();
 //builder.Services.AddTransient<AircraftService>();
 
 var app = builder.Build();

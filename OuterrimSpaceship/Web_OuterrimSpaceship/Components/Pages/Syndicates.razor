@@ -1,0 +1,123 @@
+﻿@page "/crime-syndicates"
+@using Model_OuterrimSpaceship.Repos
+@using Web_OuterrimSpaceship.Entities
+@inject IRepositoryAsync<CrimeSyndicates> SyndicateRepo
+@rendermode InteractiveServer
+
+@inject IRepositoryAsync<CrimeSyndicates> Repository
+
+<h3>Crime Syndicates</h3>
+
+@if (syndicates == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var syndicate in syndicates)
+        {
+            <tr>
+                <td>@syndicate.SyndicateId</td>
+                <td>@syndicate.Name</td>
+                <td>@syndicate.Location</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="() => EditSyndicate(syndicate)">Edit</button>
+                    <button class="btn btn-danger" @onclick="() => DeleteSyndicate(syndicate)">Delete</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <h3>@(editing ? "Edit" : "Add") Crime Syndicate</h3>
+    <EditForm Model="@currentSyndicate" OnValidSubmit="SaveSyndicate">
+        <DataAnnotationsValidator />
+        <div class="mb-3">
+            <label>Name</label>
+            <InputText class="form-control" @bind-Value="currentSyndicate.Name" />
+        </div>
+        <div class="mb-3">
+            <label>Location</label>
+            <InputText class="form-control" @bind-Value="currentSyndicate.Location" />
+        </div>
+        <button type="submit" class="btn btn-success">Save</button>
+        <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+    </EditForm>
+}
+
+@code {
+    private List<CrimeSyndicates> syndicates;
+
+    private CrimeSyndicates currentSyndicate = new CrimeSyndicates
+    {
+        Name = "",
+        Location = ""
+    };
+
+    private bool editing = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        syndicates = await SyndicateRepo.ReadAllAsync();
+    }
+
+    private void EditSyndicate(CrimeSyndicates syndicate)
+    {
+        currentSyndicate = new CrimeSyndicates
+        {
+            SyndicateId = syndicate.SyndicateId,
+            Name = syndicate.Name,
+            Location = syndicate.Location
+        };
+        editing = true;
+    }
+
+    private async Task SaveSyndicate()
+    {
+        if (editing)
+        {
+            await Repository.UpdateAsync(currentSyndicate);
+        }
+        else
+        {
+            await Repository.CreateAsync(currentSyndicate);
+        }
+
+        syndicates = await Repository.ReadAllAsync();
+        currentSyndicate = new CrimeSyndicates
+        {
+            Name = "",
+            Location = ""
+        };
+        editing = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task DeleteSyndicate(CrimeSyndicates syndicate)
+    {
+        await SyndicateRepo.DeleteAsync(syndicate);
+        syndicates = await Repository.ReadAllAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void CancelEdit()
+    {
+        currentSyndicate = new CrimeSyndicates
+        {
+            Name = "",
+            Location = ""
+        };
+        editing = false;
+    }
+
+}
